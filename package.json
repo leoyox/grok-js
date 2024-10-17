@@ -46,12 +46,14 @@
     "async": "^3.0.1",
     "collections": "github:honzahommer/collections",
     "debug": "^4.1.1",
-    "oniguruma": "^7.2.0",
+    "grok-js": "file:",
+    "oniguruma": "^7.2.3",
     "universalify": "^0.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "husky": "^4.2.3",
+    "jest": "^29.7.0",
     "mocha": "^10.6.0",
     "nyc": "^15.0.0",
     "semistandard": "^14.0.0"

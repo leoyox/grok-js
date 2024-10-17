@@ -6,13 +6,19 @@ const testParse = (p, str, expected, done) => {
   grok.loadDefault((err, patterns) => {
     expect(err).to.be.null;
 
-    patterns.createPattern(p).parse(str, (err, result) => {
+    patterns.createPattern( p ).parse( str, ( err, result ) => {
+      console.log( err, result )
       expect(err).to.be.null;
       expect(result).to.be.eql(expected);
       done();
     });
   });
 };
+
+const testParseSync = ( p, str ) => {
+  const $grok = grok.loadDefaultSync()
+  return $grok.createPattern( p ).parseSync( str )
+}
 
 describe('grok', () => {
   describe('loadDefault', () => {
@@ -27,14 +33,28 @@ describe('grok', () => {
     });
   });
 
-  describe('#parseSync()', () => {
+  describe( '#parseSync()', () => {
+    it( "[]", () => {
+
+      console.log( testParseSync( "\\[%{IP:ip}:%{INT:port}]", "[142.171.151.221:50654]" ) )
+
+      console.log( testParseSync( "\\[%{NOTSPACE:level}] \\[%{IP:ip}:%{INT:port}]", "[DEBUG] [142.171.151.221:50654]" ) )
+    } )
+    it( "frps", () => {
+      const time = "%{INT:year}/%{INT:month}/%{INT:day} %{INT:hour}:%{INT:minute}:%{INT:second}"
+      console.log( testParseSync( time, "2024/10/08 16:34:35" ) )
+
+      const ptn = `\\[%{WORD:level}] \\[%{DATA:file}:%{INT:lineNo}] \\[%{DATA:requestId}] \\[%{DATA:serviceName}] get a user connection \\[%{IP:ip}:%{INT:port}]`
+      const x = testParseSync( ptn, "[I] [proxy.go:179] [642e90af807aab16] [gitlab-ssh] get a user connection [142.171.151.221:50654]" )
+      console.log( x )
+    } )
     it('returns null when a parse fails', () => {
       const patterns = grok.loadDefaultSync();
       const pattern = patterns.createPattern('%{WORD:verb} %{WORD:adjective}');
       const result = pattern.parseSync('test');
 
       expect(result).to.be.null;
-    });
+    } );
   });
 
   describe('#parse()', () => {
